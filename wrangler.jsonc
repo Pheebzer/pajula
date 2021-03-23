@@ -1,0 +1,20 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "pajula-rocks",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-08-30",
+	"observability": {
+		"enabled": true
+	},
+	"kv_namespaces": [
+		{
+			"binding": "pajula",
+			"id": "11c3ee665bc34fee8238c97e78f03bb1" // replace with your own
+		}
+	],
+	"triggers": {
+		"crons": [
+			"*/5 * * * *"
+		]
+	}
+}
