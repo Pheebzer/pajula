@@ -9,20 +9,24 @@ export interface Env {
   CLOUDFLARE_ZONE_ID?: string;
 }
 
-export interface AccessTokenResponse { access_token: string };
-export interface UserDataResponse { display_name: string };
-export interface MetadataResponse { 
+export interface AccessTokenResponse {
+  access_token: string;
+}
+export interface UserDataResponse {
+  display_name: string;
+}
+export interface MetadataResponse {
   snapshot_id: string;
   name: string;
   images: { url: string; width: number; height: number }[];
-  tracks: { total: number }
-};
+  tracks: { total: number };
+}
 
 // Shape of the objects the API returns, cannot be altered
 // Can be null for unavailable tracks
 export type TrackItem = {
   added_at: string;
-  added_by: { 
+  added_by: {
     id: string;
     display_name?: string;
   };
@@ -37,7 +41,7 @@ export type TrackItem = {
 
 export interface TracksPageResponse {
   items: TrackItem[];
-};
+}
 
 export type Track = {
   id: string;
@@ -55,7 +59,7 @@ export interface UserData {
   songCount: number;
   totalLenghtMs: number;
   tracks: Track[];
-};
+}
 
 export type MasterData = Record<string, UserData>;
 
@@ -63,8 +67,6 @@ export interface DuplicateEntry {
   song: string;
   artist: string;
   addedBy: { user: string; AddedAt: string }[];
-};
+}
 
 export type DuplicateData = Record<string, DuplicateEntry>;
-
-

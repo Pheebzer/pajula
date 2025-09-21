@@ -1,16 +1,8 @@
-import {
-  DuplicateEntry,
-  Env,
-  Track,
-  TrackItem,
-  UserData
-} from "../types";
-import { getUsernameById } from "./spotify-api";
-import { semanticKey } from "./deduplicator";
+import { DuplicateEntry, Env, Track, TrackItem, UserData } from '../types';
+import { getUsernameById } from './spotify-api';
+import { semanticKey } from './deduplicator';
 
-
-export async function spotifyApiRequest<T>( url: string, method: string, headers: Record<string, string>, body: any = null
-  ): Promise<T> {
+export async function spotifyApiRequest<T>(url: string, method: string, headers: Record<string, string>, body: any = null): Promise<T> {
   const options: RequestInit = { method, headers };
   if (body !== null) options.body = body;
   const r = await fetch(url, options);
@@ -20,8 +12,8 @@ export async function spotifyApiRequest<T>( url: string, method: string, headers
   return r.json() as Promise<T>;
 }
 
-export async function getClodflareKvKey(env: Env, key: string): Promise<string|null> {
-  const value =  await env.pajula.get(key);
+export async function getClodflareKvKey(env: Env, key: string): Promise<string | null> {
+  const value = await env.pajula.get(key);
   if (!value) console.error(`cannot find key ${key} from KV storage`);
   return value;
 }
@@ -32,9 +24,9 @@ export function formatDuration(ms: number): string {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
 
-  const h = hours > 0 ? `${hours}:` : "";
-  const m = hours > 0 ? String(minutes).padStart(2, "0") : String(minutes);
-  const s = String(seconds).padStart(2, "0");
+  const h = hours > 0 ? `${hours}:` : '';
+  const m = hours > 0 ? String(minutes).padStart(2, '0') : String(minutes);
+  const s = String(seconds).padStart(2, '0');
 
   return `${h}${m}:${s}`;
 }
@@ -55,18 +47,18 @@ export async function processItem(data: UserData, track: Track) {
   data.tracks.push(track);
 }
 
-export function hasTrack(i: TrackItem): i is TrackItem & { track: NonNullable<TrackItem["track"]> } {
+export function hasTrack(i: TrackItem): i is TrackItem & { track: NonNullable<TrackItem['track']> } {
   return i.track !== null;
 }
 
-export function toTrack(trackItem: TrackItem & { track: NonNullable<TrackItem["track"]>}): Track {
-  return  {
+export function toTrack(trackItem: TrackItem & { track: NonNullable<TrackItem['track']> }): Track {
+  return {
     id: trackItem.track.id,
     name: trackItem.track.name,
     durationMs: trackItem.track.duration_ms,
     durationTimestamp: formatDuration(trackItem.track.duration_ms),
     album: trackItem.track.album.name,
-    artist: trackItem.track.artists.map(a => a.name).join(', '),
+    artist: trackItem.track.artists.map((a) => a.name).join(', '),
     addedBy: trackItem.added_by.id,
     addedAt: trackItem.added_at,
   };
@@ -79,7 +71,7 @@ export async function initUserData(accessToken: string, id: string): Promise<Use
     songCount: 0,
     totalLenghtMs: 0,
     tracks: [],
-  }
+  };
 }
 
 export function updateDuplicates(dupes: Record<string, DuplicateEntry>, t: Track): void {
@@ -112,21 +104,21 @@ export async function purgeCloudflareCache(env: Env): Promise<void> {
     const urls = ['/', '/data'];
     const apiUrl = `https://api.cloudflare.com/client/v4/zones/${env.CLOUDFLARE_ZONE_ID}/purge_cache`;
     const requestBody = {
-      files: urls.map(url => `https://${env.CLOUDFLARE_DOMAIN}${url}`)
+      files: urls.map((url) => `https://${env.CLOUDFLARE_DOMAIN}${url}`),
     };
-    
+
     console.log('Purging cache for URLs:', requestBody.files);
     console.log('API URL:', apiUrl);
-    
+
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${env.CLOUDFLARE_API_TOKEN}`,
+        Authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify(requestBody),
     });
-    
+
     if (!response.ok) {
       const errorText = await response.text();
       console.warn('Failed to purge Cloudflare cache:', response.status, response.statusText);

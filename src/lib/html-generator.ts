@@ -2,19 +2,19 @@ import { formatDuration, formatDate } from './utils';
 import { MasterData } from '../types';
 
 export function getChangeLog(): string[] {
-	return [
-      "20.09.2025 - Complete backend rewrite, new UI",
-      "28.09.2022 - Add timestamp to show the last time data was updated",
-      "25.01.2022 - Identify users by profile's 'display_name' attribute instead of the potentially incomprehensible user id",
-      "30.05.2021 - Added UTF-8 support to properly render umlauts, skandic characters, etc",
-    ]
+  return [
+    '20.09.2025 - Complete backend rewrite, new UI',
+    '28.09.2022 - Add timestamp to show the last time data was updated',
+    "25.01.2022 - Identify users by profile's 'display_name' attribute instead of the potentially incomprehensible user id",
+    '30.05.2021 - Added UTF-8 support to properly render umlauts, skandic characters, etc',
+  ];
 }
 
 export function generateHtml(data: { metadata: any; users: MasterData; duplicates: any[] }): string {
-	const { metadata, users, duplicates } = data;
-	const lastUpdated = formatDate(metadata.lastUpdated);
-	
-	return `<!DOCTYPE html>
+  const { metadata, users, duplicates } = data;
+  const lastUpdated = formatDate(metadata.lastUpdated);
+
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -413,8 +413,9 @@ export function generateHtml(data: { metadata: any; users: MasterData; duplicate
         </div>
         
         ${Object.entries(users)
-            .sort(([,a], [,b]) => (b as any).songCount - (a as any).songCount)
-            .map(([userId, userData]) => `
+          .sort(([, a], [, b]) => (b as any).songCount - (a as any).songCount)
+          .map(
+            ([userId, userData]) => `
             <div class="user-section">
                 <div class="user-header" onclick="toggleTable(this)">
                     <div class="user-name">${(userData as any).displayName}<span class="expand-icon">▶</span></div>
@@ -439,40 +440,60 @@ export function generateHtml(data: { metadata: any; users: MasterData; duplicate
                         </tr>
                     </thead>
                     <tbody>
-                        ${(userData as any).tracks.map((track: any) => `
+                        ${(userData as any).tracks
+                          .map(
+                            (track: any) => `
                             <tr>
                                 <td class="track-name">${track.name}</td>
                                 <td class="track-artist">${track.artist}</td>
                                 <td class="track-album">${track.album}</td>
                                 <td class="track-duration">${track.durationTimestamp}</td>
                             </tr>
-                        `).join('')}
+                        `,
+                          )
+                          .join('')}
                     </tbody>
                 </table>
             </div>
-            `).join('')}
+            `,
+          )
+          .join('')}
         
-        ${duplicates.length > 0 ? `
+        ${
+          duplicates.length > 0
+            ? `
         <div class="duplicates-section">
             <h2 class="duplicates-title">🔄 Duplicate Songs</h2>
-            ${duplicates.map((dupe: any) => `
+            ${duplicates
+              .map(
+                (dupe: any) => `
                 <div class="duplicate-item">
                     <div class="duplicate-song">${dupe.song}</div>
                     <div class="duplicate-artist">by ${dupe.artist}</div>
                     <div class="duplicate-users">
-                        Added by: ${dupe.addedBy.map((entry: any) => `
+                        Added by: ${dupe.addedBy
+                          .map(
+                            (entry: any) => `
                             <span class="duplicate-user">${entry.user} (${formatDate(entry.AddedAt)})</span>
-                        `).join('')}
+                        `,
+                          )
+                          .join('')}
                     </div>
                 </div>
-            `).join('')}
+            `,
+              )
+              .join('')}
         </div>
-        ` : ''}
+        `
+            : ''
+        }
         
         <div class="changelog-section">
             <h2 class="changelog-title">📝 Changelog</h2>
             <ul class="changelog-list">
-                ${getChangeLog().map(entry => `<li>${entry}</li>`).join('')}
+                ${getChangeLog()
+                  .map((entry) => `<li>${entry}</li>`)
+                  .join('')}
             </ul>
         </div>
     </div>
