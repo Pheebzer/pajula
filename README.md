@@ -1,6 +1,7 @@
 # Spotify Playlist Tracker
 
-A Cloudflare Workers application for fetching and processing Spotify playlist data, and presenting it as an HTML dashboard. Raw JSON data is also made available via the `/data` endpoint.
+A Cloudflare Workers application for fetching and processing Spotify playlist data, and presenting it as an HTML dashboard.  
+Raw JSON data is also made available via the `/data` endpoint.
 
 An example of the dashboard is (probably) running at https://pajula.rocks
 
@@ -47,14 +48,15 @@ This guarantees always fresh content, low response times, and cost savings by fe
 For this to work, make sure Cloudflare is configured to:
  - cache the content (exact TTL does't matter) for the appropriate domain / routes
  - not add any cache headers that encourage browser to cache content locally
+Implementing appropriate cache policy is left as an excercise to the reader.
 
 ## Local Development
 
 The local environment is a fully emulated runtime provided by [Miniflare v3](https://developers.cloudflare.com/workers/testing/miniflare/), which is baked into Wrangler.
 
-Miniflare will start a local worker, and also create a fake scheduler and KV storage for it to use. The server is automatically reloaded on source code changes.
+Miniflare will start a local worker, and also create a fake scheduler and KV storage for it to use.
 
-Note that the local environment will persist KV data between local server restarts. If you need to modify or reset the KV, the data can be found under `.wrangler/state/v3/kv`.
+Note that the local environment will persist KV data between restarts. If you need to modify or reset the KV, the data can be found under `.wrangler/state/v3/kv`.
 
 ```bash
 # Start dev server
@@ -69,6 +71,8 @@ curl -X POST http://localhost:8787/cdn-cgi/handler/scheduled
 
 ## Deployment
 
-To deploy a new version to Cloudflare, simply run `wrangler deploy`. No separate dev environment is currently implemented because the local environment should be sufficient to test logic changes.
+Run `wrangler deploy`.
+
+No separate dev environment is currently implemented, as the local environment should be sufficient to test logic changes.
 
 If you want a separate dev environment, one can easily be set up following [these instructions](https://developers.cloudflare.com/workers/wrangler/environments/).
